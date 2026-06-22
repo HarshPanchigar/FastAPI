@@ -1,33 +1,24 @@
-from fastapi import FastAPI , status ,HTTPException
-from pydantic import BaseModel
+import sqlite3
+from fastapi import FastAPI
 
 app = FastAPI()
 
-@app.post("/create_user",status_code=status.HTTP_201_CREATED)
-def create_user():
-    return{
-        "message" : "user created"
-    }
+conn = sqlite3.connect("test.db", check_same_thread=False)
 
-@app.get("/user")
-def get_users():
-    return{
-        "status" : "succsess",
-        "message" : "user fetch",
-        "data" : {
-            "name" : "Harsh",
-            "age" : 20
-        }
-    }
+cursor = conn.cursor()
 
-@app.get("/user/{id}")
-def get_user(id:int):
-    if id != 1:
-        raise HTTPException(
-            status_code= 404,
-            detail= "user not found"
-        )
-    return{
-        "id" : 1,
-        "name" : "harsh"
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS todos(
+    id INTEGER PRIMARY KEY,
+    title TEXT,
+    completed TEXT
+)
+""")
+
+conn.commit()
+
+@app.get("/home")
+def home():
+    return {
+        "message": "SQLite connected"
     }
