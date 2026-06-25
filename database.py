@@ -1,10 +1,11 @@
-from sqlalchemy import create_engine,Column,Integer,String
+from sqlalchemy import create_engine , Column,Integer,String
 from sqlalchemy.orm import sessionmaker, declarative_base,Session
 from fastapi import FastAPI,Depends
 
 app = FastAPI()
 
 DATABASE_URL = "sqlite:///./test.db"
+
 
 engine = create_engine(
     DATABASE_URL,
