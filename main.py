@@ -40,10 +40,44 @@ def create_todo(title : str , db : Session = Depends(get_db)):
         "message" : "todo created",
         "data" : todo
     }
+
 @app.get("/todos")
-def get_todo(db: Session = Depends(get_db)):
+def get_todos(db: Session = Depends(get_db)):
     todos = db.query(Todo).all()
 
     return {
         "data": todos
+    }
+
+@app.get("/todos/{id}")
+def get_todo(id: int, db: Session = Depends(get_db)):
+    return db.get(Todo, id)
+
+@app.put("/todos/{id}")
+def update_todo(id: int,title:str,completed:str,db: Session = Depends(get_db)):
+
+    todo = db.query(Todo).filter(Todo.id == id).first()
+
+    if not todo:
+        return {"message": "Todo not found"}
+
+    # todo.title = title
+    # todo.completed = completed
+
+    db.commit()
+    db.refresh(todo)
+
+    return todo
+
+@app.delete("/todos/{id}")
+def delete_todo(id:int,db:Session = Depends(get_db)):
+    todo = db.get(Todo,id)
+
+    if not todo:
+        return {"message": "Todo not found"}
+    db.delete(todo)
+    db.commit()
+
+    return {
+        "message": "Todo deleted successfully"
     }
