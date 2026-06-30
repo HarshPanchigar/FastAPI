@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CORS Demo</title>
+</head>
+<body>
+
+    <h1 id="result">Loading...</h1>
+
+    <script>
+        fetch("http://127.0.0.1:8000/")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("result").innerText =
+                    data.message;
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    </script>
+
+</body>
+</html>
