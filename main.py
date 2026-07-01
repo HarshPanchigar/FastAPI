@@ -1,29 +1,30 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-# import os
-# from dotenv import load_dotenv
-from config import settings
-
-
+from fastapi import FastAPI ,HTTPException
+import requests
 
 app = FastAPI()
 
-# load_dotenv()
-# SECRET_KEY = os.getenv("SECRET_KEY")
-# DB_URL = os.getenv("DB_URL")
-origins = settings.origins
+respons = requests.get("https://jsonplaceholder.typicode.com/posts")
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins = origins.split(",") if origins else [],
-    allow_credentials = True,
-    allow_methods = ["*"],
-    allow_headers = ["*"]
-)
+data = respons.json()
+print(data)
 
-@app.get("/")
-def get_form():
-    return{
-        "message":"CORS ENABLE API"
-    }
+@app.get("/posts/{post_id}")
+def get_posts(post_id:int):
+    url = f"https://jsonplaceholder.typicode.com/posts/{post_id}"
 
+    respons = requests.get(url)
+
+    if respons.status_code != 200:
+        raise HTTPException(
+            status_code=404,
+            detail="page not found"
+        )
+    return respons.json()
+
+@app.get("/posts")
+def get_post():
+    url = "https://jsonplaceholder.typicode.com/posts"
+
+    respons = requests.get(url)
+
+    return respons.json()
